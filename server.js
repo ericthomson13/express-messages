@@ -9,26 +9,41 @@ const port = 3000;
 
 // create message route
 app.post('/message', (req, res) => {
-	res.send(420, 'route is hitting server');
+	console.log(req.body);
+	// need to account for async
+	Message.createMessage(req.body);
+	res.send(201, 'route is hitting server');
 })
 
 // readAll route
-app.get('/message', (req, res) => {
-	
+app.get('/message/read', (req, res) => {
+	// need to account for async
+	Message.readAllMessages()
+	res.set('body', 'allMessagesGoHere')
+	res.send(200)
 })
 
 // readOne route
-app.get('/message/id/:id', (req, res) => {
+app.get('/message/read/:id', (req, res) => {
+	// need to account for async
+	Message.readMessage(req.body.id)
 
+	res.send()
 })
 
 // update route
 app.put('/messages/update/:id', (req, res) => {
-
+	Message.updateMessage(req.body);
+	
+	res.send()
 })
 
 // delete route
+app.delete('messages/delete/:id', (req, res) => {
+	Message.deleteMessage(id)
 
+	res.send()
+})
 
 app.listen(port, () => {
   console.log('Listening on port', port);
