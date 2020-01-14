@@ -6,16 +6,16 @@ let sampleBody = { id: 1, name: 'Criminal', message: 'What Are You?' }
 const Message = {
 	createMessage (body) {
 		// create message from body and then add id and add to db
-
+		db.writeFile()
 		// return true/false for err/noerror
-
+		return 'this'
 	},
 
 	readAllMessages () {
 		// read all messages on db
-
+		db.readFile()
 		// return all messages
-
+		
 	},
 
 	readMessage () {

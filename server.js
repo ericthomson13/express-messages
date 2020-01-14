@@ -10,39 +10,55 @@ const port = 3000;
 // create message route
 app.post('/message', (req, res) => {
 	console.log(req.body);
-	// need to account for async
-	Message.createMessage(req.body);
-	res.send(201, 'route is hitting server');
+	Message.createMessage(req.body)
+		.then(res.send(201, 'route is hitting server'))
+		.catch((err) => {
+			res.set('body', err)
+			res.send(409)
+		})
 })
 
 // readAll route
 app.get('/message/read', (req, res) => {
 	// need to account for async
-	Message.readAllMessages()
-	res.set('body', 'allMessagesGoHere')
-	res.send(200)
+	Message.readAllMessages(req.body)
+	.then(result => {
+		res.set('body', result)
+		res.send(200)
+	})
+	.catch(err => {
+		res.set('body', err)
+		res.send(404)
+	})
+	
 })
 
 // readOne route
 app.get('/message/read/:id', (req, res) => {
 	// need to account for async
-	Message.readMessage(req.body.id)
-
-	res.send()
+	res.set('body', Message.readMessage(req.body.id))
+		.then((result) => {
+			res.set('body', result)
+			res.send(200)
+		})
+		.catch(err => res.send(err))
 })
 
 // update route
 app.put('/messages/update/:id', (req, res) => {
-	Message.updateMessage(req.body);
+	Message.updateMessage(req.body)
+		.then(() => res.send(202))
+		.catch(err => {
+			res.send(err)
+		})
 	
-	res.send()
 })
 
 // delete route
 app.delete('messages/delete/:id', (req, res) => {
 	Message.deleteMessage(id)
-
-	res.send()
+		.then(() => res.send(204))
+		.catch(err => res.send(err))
 })
 
 app.listen(port, () => {
