@@ -11,7 +11,9 @@ const port = 3000;
 app.post('/message', (req, res) => {
 	console.log(req.body);
 	Message.createMessage(req.body)
-		.then(res.send(201, 'route is hitting server'))
+		.then(() => {
+			res.send(201, 'route is hitting server')
+		})
 		.catch((err) => {
 			res.set('body', err)
 			res.send(409)
@@ -19,9 +21,9 @@ app.post('/message', (req, res) => {
 })
 
 // readAll route
-app.get('/message/read', (req, res) => {
+app.get('/message', (req, res) => {
 	// need to account for async
-	Message.readAllMessages(req.body)
+	Message.readAllMessages()
 	.then(result => {
 		res.set('body', result)
 		res.send(200)
@@ -34,9 +36,9 @@ app.get('/message/read', (req, res) => {
 })
 
 // readOne route
-app.get('/message/read/:id', (req, res) => {
+app.get('/message/:id', (req, res) => {
 	// need to account for async
-	res.set('body', Message.readMessage(req.body.id))
+	Message.readMessage(req.body)
 		.then((result) => {
 			res.set('body', result)
 			res.send(200)
@@ -45,7 +47,7 @@ app.get('/message/read/:id', (req, res) => {
 })
 
 // update route
-app.put('/messages/update/:id', (req, res) => {
+app.put('/message/:id', (req, res) => {
 	Message.updateMessage(req.body)
 		.then(() => res.send(202))
 		.catch(err => {
@@ -55,8 +57,8 @@ app.put('/messages/update/:id', (req, res) => {
 })
 
 // delete route
-app.delete('messages/delete/:id', (req, res) => {
-	Message.deleteMessage(id)
+app.delete('message/:id', (req, res) => {
+	Message.deleteMessage(req.body)
 		.then(() => res.send(204))
 		.catch(err => res.send(err))
 })
