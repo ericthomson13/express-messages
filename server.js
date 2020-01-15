@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const Message = require('./db/Message');
+const User = require('./db/Users');
 const bp = require('body-parser');
 
 app.use(bp.json());
@@ -46,6 +47,12 @@ app.delete('/messages/:id', async (req, res) => {
 			res.sendStatus(404);
 		}
 })
+
+// USER ROUTES BELOW
+
+
+
+
 
 app.listen(port, () => {
   console.log('Listening on port', port);

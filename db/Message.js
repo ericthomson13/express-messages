@@ -11,13 +11,11 @@ const messagesSchema = new mongoose.Schema ({
 
 const MessageModel = mongoose.model('MessagesDb', messagesSchema);
 
-let sampleBody = { id: 1, name: 'Criminal', message: 'What Are You?' }
-
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'connection error:'));
+db.on('error', console.error.bind(console, 'connection error: Messages'));
 db.once('open', function() {
-  console.log('connected to DB!')
+  console.log('connected to DB Messages!')
 });
 
 const Message = {
