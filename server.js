@@ -8,62 +8,43 @@ app.use(bp.json());
 const port = 3000;
 
 // create message route
-app.post('/messages', (req, res) => {
-	console.log(req.body);
-	Message.createMessage(req)
-		.then((err, result) => {
-			if (err) {
-				res.status(409).send('post was rejected');
-			} else {
-				res.status(201).send('Great success!: ' + result);
-			}
-		})
-})
-
-// readAll route
-app.get('/messages', (req, res) => {
-	// need to account for async
-	Message.readAllMessages()
-	.then((err, result) => {
-		res.set('body', result)
-		res.status(200);
-		res.send()
-	})
-	.catch(err => {
-		res.status(404)
-		res.set('body', err)
-		res.send()
-	})
-	
+app.post('/messages', async (req, res) => {
+	try {let message = await Message.createMessage(req.body)
+		res.status(201).send('Great success!')
+	} catch {
+		res.send(404);
+	}
 })
 
 // readOne route
-app.get('/messages/:id', (req, res) => {
-	// need to account for async
-	Message.readMessage(req.body, req.params)
-		.then((err,result) => {
-			res.status(200)
-			res.set('body', result)
-			res.send()
-		})
-		.catch(err => res.send(err))
+app.get('/messages/:id', async (req, res) => {
+	let message = await Message.readMessage(req)
+	res.send({message: message})
+})
+
+// readAll route
+app.get('/messages', async (req, res) => {
+	let messages = await Message.readAllMessages()
+	res.body = messages;
+	res.send({messages: messages});
 })
 
 // update route
-app.put('/messages/:id', (req, res) => {
-	Message.updateMessage(req.body, req.params)
-		.then((err, result) => res.send(202))
-		.catch(err => {
-			res.send(err)
-		})
-	
+app.put('/messages/:id', async (req, res) => {
+	let message = await Message.updateMessage(req)
+	res.send(202)
 })
 
 // delete route
-app.delete('messages/:id', (req, res) => {
-	Message.deleteMessage(req.body, req.params)
-		.then((err, result) => res.send(204))
-		.catch(err => res.send(err))
+app.delete('/messages/:id', async (req, res) => {
+	console.log('hit delete')
+		let deleted = await Message.deleteMessage(req)
+		console.log('deleted: ' + deleted.n)
+		if (deleted.n > 0) {
+			res.sendStatus(200);
+		} else {
+			res.sendStatus(404);
+		}
 })
 
 app.listen(port, () => {

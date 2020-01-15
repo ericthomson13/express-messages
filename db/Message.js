@@ -17,59 +17,49 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  // we're connected!
+  console.log('connected to DB!')
 });
 
 const Message = {
 	createMessage: async function (body) {
-			console.log('made it to create messages func');
-			// create message from body and then add id and add to db
-			let newMessage = new MessageModel({id: body.id, name: body.name, message: body.message});
-			console.log('newMessage: ' + newMessage);
-			let result = await newMessage.save((err, newMessage) => {
+			let newMessage = await new MessageModel({id: body.id, name: body.name, message: body.message});
+			return await newMessage.save((err, newMessage) => {
 				if (err) {
 					return err;
 				} else {
-					return newMessage.message;
+					return newMessage;
 				}
 			});
-			return result;
 	},
 
-	readAllMessages () {
-		// read all messages on db
-		// db.readFile()
-		// return all messages
-		return 'readAll in Progress'
+	readAllMessages: async () => {
+		return await MessageModel.find((err, messages) => {})
 	},
 
-	readMessage () {
+	readMessage: async (req) => {
+		// this doesn't behave either params aren't params or it's not taking params
+		return await MessageModel.find({id: req.params.id}, (err, result) => {})
+	},
+
+	updateMessage: async (req) => {
 		// find message by id
-
-		// return that message
-		return 'readOne in Progress'
-	},
-
-	updateMessage () {
-		// find message by id
-
-		// update the message at id
-
+		let found = await MessageModel.find({id: req.params.id}, (err, result) => {})
+		found = found[0];
+		found.name = req.body.name;
+		found.message = req.body.message;
+		return found.save((err, result) => {
+			if (err) {
+				return err
+			} else {
+				return result
+			}
+		})
 		// TODO make so only user who created can update
-
-		// return true/false or not found
-		return 'update in progress'
 	},
 
-	deleteMessage () {
-		// find message by id
-
-		// delete message at id
-
+	deleteMessage: async (req, callback) => {
+		return await MessageModel.deleteOne({id: req.params.id}, (err, result) => {});
 		// TODO make so only user who created can delete
-
-		// return message text or error
-		return 'delete in progress'
 	}	
 }
 
